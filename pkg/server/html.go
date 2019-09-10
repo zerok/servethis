@@ -19,6 +19,30 @@ var htmlTemplate = `<!doctype html>
 	font-family: "Roboto", "Helvetica Neue", helvetica, arial, sans-serif;
 	color: #333;
 }
+pre {
+	font-family: "Courier New", Courier, monospace;
+	font-size: 14px;
+	margin: 30px 0;
+	border: 1px solid #DDD;
+	padding: 1em;
+	line-height: 1.3em;
+	overflow: hidden;
+}
+pre code {
+	display: block;
+	background: #444;
+	color: #EEE;
+	padding: 1em;
+	overflow: hidden;
+}
+blockquote {
+	font-style: italic;
+	padding-left: 2em;
+	font-size: 95%;
+	margin: 3em 0;
+	color: #4d4d4d;
+	border-left: 8px solid #e9f3fd;
+}
 h1 {
 	text-align: center;
 }
