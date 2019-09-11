@@ -7,4 +7,5 @@ require (
 	github.com/gomarkdown/markdown v0.0.0-20190817180551-b0273bd33515
 	github.com/rs/zerolog v1.15.0
 	github.com/spf13/pflag v1.0.3
+	gopkg.in/yaml.v2 v2.2.2
 )

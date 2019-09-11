@@ -3,7 +3,8 @@ package server
 import "html/template"
 
 type htmlTemplateContent struct {
-	Content template.HTML
+	Content     template.HTML
+	Frontmatter frontmatter
 }
 
 var htmlTemplate = `<!doctype html>
@@ -13,7 +14,7 @@ var htmlTemplate = `<!doctype html>
 <style>
 #wrapper {
 	max-width: 750px;
-	margin: auto;
+	margin: 60px auto;
 	line-height: 32px;
 	font-size: 18px;
 	font-family: "Roboto", "Helvetica Neue", helvetica, arial, sans-serif;
@@ -45,6 +46,7 @@ blockquote {
 }
 h1 {
 	text-align: center;
+	margin-bottom: 60px;
 }
 h1, h2, h3, h4, h5, h6 {
 	color: #1177d7;
@@ -65,6 +67,7 @@ p {
 </head>
 <body>
 <div id="wrapper">
+{{ if .Frontmatter.Title }}<h1>{{ .Frontmatter.Title }}</h1>{{ end }}
 {{ .Content }}
 </div>
 </body>
