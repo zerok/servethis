@@ -6,6 +6,7 @@ import (
 	"html/template"
 	"io/ioutil"
 	"net/http"
+	"strings"
 
 	"github.com/go-chi/chi"
 	"github.com/gomarkdown/markdown"
@@ -17,7 +18,8 @@ import (
 var tpl = template.Must(template.New("main").Parse(htmlTemplate))
 
 type frontmatter struct {
-	Title string `yaml:"title"`
+	Title string   `yaml:"title"`
+	Tags  []string `yaml:"tags"`
 }
 
 func New(ctx context.Context, rootDir string) *Server {
@@ -28,8 +30,7 @@ func New(ctx context.Context, rootDir string) *Server {
 		fs:      http.Dir(rootDir),
 		handler: handler,
 	}
-	handler.Handle("/*", http.FileServer(srv.fs))
-	handler.Get("/{path}.md", srv.handleMarkdown)
+	handler.Handle("/*", http.HandlerFunc(srv.dispatch))
 	return srv
 }
 
@@ -41,6 +42,14 @@ type Server struct {
 
 func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	s.handler.ServeHTTP(w, r)
+}
+
+func (s *Server) dispatch(w http.ResponseWriter, r *http.Request) {
+	if strings.HasSuffix(r.URL.Path, ".md") {
+		s.handleMarkdown(w, r)
+		return
+	}
+	http.FileServer(s.fs).ServeHTTP(w, r)
 }
 
 func (s *Server) handleMarkdown(w http.ResponseWriter, r *http.Request) {

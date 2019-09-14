@@ -46,7 +46,23 @@ blockquote {
 }
 h1 {
 	text-align: center;
+}
+header {
 	margin-bottom: 60px;
+}
+header h1 {
+	margin-bottom: 0;
+}
+header p {
+	margin: 0;
+	text-align: center;
+	font-size: 14px;
+	color: #999;
+}
+
+header p span {
+	color: #1077D7;
+	text-decoration: underline;
 }
 h1, h2, h3, h4, h5, h6 {
 	color: #1177d7;
@@ -63,11 +79,33 @@ a:hover {
 p {
 	margin-bottom: 1em;
 }
+figure img {
+	max-width: 98%;
+	padding: 1%;
+}
+
+figure {
+	border: 1px solid #DDD;
+	text-align: center;
+}
+
+figcaption {
+	background: #DDD;
+	color: #333;
+	font-size: 14px;
+	padding: 2px 5px;
+	text-align: center;
+}
 </style>
 </head>
 <body>
 <div id="wrapper">
+<header>
 {{ if .Frontmatter.Title }}<h1>{{ .Frontmatter.Title }}</h1>{{ end }}
+{{ if .Frontmatter.Tags }}
+<p>Tags: {{ range .Frontmatter.Tags }}<span>{{ . }}</span> {{ end }}</p>
+{{ end }}
+</header>
 {{ .Content }}
 </div>
 </body>
