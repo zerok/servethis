@@ -14,15 +14,19 @@ import (
 func main() {
 	ctx := context.Background()
 	var addr string
+	var err error
 	pflag.StringVar(&addr, "addr", "127.0.0.1:9980", "Address to listen on")
 	pflag.Parse()
 
 	logger := zerolog.New(zerolog.ConsoleWriter{Out: os.Stderr}).Level(zerolog.InfoLevel).With().Timestamp().Logger()
 	ctx = logger.WithContext(ctx)
 
-	wd, err := os.Getwd()
-	if err != nil {
-		logger.Fatal().Err(err).Msg("Failed to determine current working directory.")
+	wd := pflag.Arg(0)
+	if wd == "" {
+		wd, err = os.Getwd()
+		if err != nil {
+			logger.Fatal().Err(err).Msg("Failed to determine current working directory.")
+		}
 	}
 
 	logger.Info().Msgf("Serving content from %s", wd)
