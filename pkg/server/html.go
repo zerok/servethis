@@ -12,12 +12,37 @@ var htmlTemplate = `<!doctype html>
 <head>
 <meta charset="utf-8">
 <style>
+.file-listing {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+.file-listing li {
+	padding: 5px 0;
+	border-bottom: 1px solid #DDD;
+}
+.file-listing__name {
+	display: block;
+}
+.file-listing__modtime {
+	position: absolute;
+	bottom: 5px;
+	right: 0px;
+	font-size: 80%;
+	opacity: 0.6;
+}
+.file-listing__item {
+	position: relative;
+}
+.file-listing__item--dir {
+	opacity: 0.5;
+}
 #wrapper {
 	max-width: 750px;
 	margin: 60px auto;
 	line-height: 32px;
 	font-size: 18px;
-	font-family: "Roboto", "Helvetica Neue", helvetica, arial, sans-serif;
+	font-family: "Liberation Mono", "Courier New", Courier, monospace;
 	color: #333;
 }
 pre {
@@ -110,3 +135,13 @@ figcaption {
 </div>
 </body>
 </html>`
+
+var listingTemplate = `<ul class="file-listing">
+{{ range . }}
+<li class="file-listing__item {{ if .IsDir }}file-listing__item--dir{{ end }}">
+	<span class="file-listing__name"><a href="{{ .Name }}{{ if .IsDir }}/{{ end }}">{{ .Name }}</a></span>
+	<span class="file-listing__modtime">{{ datetime .ModTime }}</span>
+</li>
+{{ end }}
+</ul>
+`

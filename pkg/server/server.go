@@ -6,7 +6,10 @@ import (
 	"html/template"
 	"io/ioutil"
 	"net/http"
+	"os"
+	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/go-chi/chi"
 	"github.com/gomarkdown/markdown"
@@ -45,11 +48,61 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) dispatch(w http.ResponseWriter, r *http.Request) {
+	path := filepath.Join(s.root, r.URL.Path)
+	path, err := filepath.Abs(path)
+	if err != nil {
+		http.Error(w, "File not found", http.StatusNotFound)
+		return
+	}
+	rel, err := filepath.Rel(s.root, path)
+	if err != nil {
+		http.Error(w, "File not found", http.StatusNotFound)
+		return
+	}
+	if strings.Contains(rel, "../") {
+		http.Error(w, "File not found", http.StatusNotFound)
+		return
+	}
+	st, err := os.Stat(path)
+	if os.IsNotExist(err) {
+		http.Error(w, "File not found", http.StatusNotFound)
+		return
+	}
+	if st.IsDir() {
+		s.handleDir(w, r, path)
+		return
+	}
 	if strings.HasSuffix(r.URL.Path, ".md") {
 		s.handleMarkdown(w, r)
 		return
 	}
 	http.FileServer(s.fs).ServeHTTP(w, r)
+}
+
+func (s *Server) handleDir(w http.ResponseWriter, r *http.Request, path string) {
+	if !strings.HasSuffix(r.URL.Path, "/") {
+		http.Redirect(w, r, r.URL.Path+"/", http.StatusTemporaryRedirect)
+		return
+	}
+	var listingTpl = template.Must(template.New("listing").Funcs(map[string]interface{}{
+		"datetime": func(v time.Time) string {
+			return v.Format("2006-01-02")
+		},
+	}).Parse(listingTemplate))
+	files, err := ioutil.ReadDir(path)
+	if err != nil {
+		http.Error(w, "Failed to load directory", http.StatusNotFound)
+		return
+	}
+	var out bytes.Buffer
+	if err := listingTpl.Execute(&out, files); err != nil {
+		http.Error(w, "Failed to load directory", http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Type", "text/html;charset=utf-8")
+	tpl.Execute(w, htmlTemplateContent{
+		Content: template.HTML(out.String()),
+	})
 }
 
 func (s *Server) handleMarkdown(w http.ResponseWriter, r *http.Request) {
