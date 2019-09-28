@@ -121,6 +121,22 @@ figcaption {
 	padding: 2px 5px;
 	text-align: center;
 }
+@media (prefers-color-scheme: dark) {
+  body {
+		background: #333;
+		color: #FEFEFE;
+	}
+	a, #wrapper {
+		color: #FEFEFE;
+	}
+	h1, h2, h3, h4, h5, h6,
+	header p span {
+		color: #449ef2;
+	}
+	blockquote {
+		color: #DFDFDF;
+	}
+}
 </style>
 </head>
 <body>
