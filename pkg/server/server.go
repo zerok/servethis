@@ -76,6 +76,16 @@ func (s *Server) dispatch(w http.ResponseWriter, r *http.Request) {
 		s.handleMarkdown(w, r)
 		return
 	}
+	if strings.HasSuffix(r.URL.Path, ".html") {
+		fp, err := os.Open(path)
+		if err != nil {
+			http.Error(w, "Failed to open file", http.StatusInternalServerError)
+			return
+		}
+		defer fp.Close()
+		http.ServeContent(w, r, st.Name(), st.ModTime(), fp)
+		return
+	}
 	http.FileServer(s.fs).ServeHTTP(w, r)
 }
 

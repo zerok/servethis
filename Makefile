@@ -12,4 +12,7 @@ clean:
 install: bin/servethis
 	install $< $(HOME)/bin/
 
-.PHONY: clean all install
+test:
+	go test ./... -v
+
+.PHONY: clean all install test
