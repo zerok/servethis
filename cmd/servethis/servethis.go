@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/http"
 	"os"
+	"path/filepath"
 	"time"
 
 	"github.com/rs/zerolog"
@@ -26,6 +27,11 @@ func main() {
 		wd, err = os.Getwd()
 		if err != nil {
 			logger.Fatal().Err(err).Msg("Failed to determine current working directory.")
+		}
+	} else {
+		wd, err = filepath.Abs(wd)
+		if err != nil {
+			logger.Fatal().Err(err).Msg("Failed to determine absolute path.")
 		}
 	}
 
